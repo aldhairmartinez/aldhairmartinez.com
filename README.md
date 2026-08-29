@@ -1,28 +1,93 @@
 # aldhairmartinez.com
 
-This is my personal site — a professional portfolio and an evolving technical project at the same time. It started as a static Next.js site, and it's meant to grow, piece by piece, into an observed, full-stack application. This README tracks what's actually built alongside what's planned, so the project stays honest about its own state.
+My personal technical portfolio — and, alongside that, an evolving hands-on observability and development lab. It started as a static Next.js site and is meant to grow, piece by piece, into a fully observed application, with each addition built and verified for real rather than described in advance.
 
-Live at [aldhairmartinez.com](https://aldhairmartinez.com).
+**Live at [aldhairmartinez.com](https://aldhairmartinez.com).**
 
 ## What this is
 
 - **A portfolio.** Projects, writing, career history, and a resume for Aldhair Martinez, a Solutions Engineer working across observability, cloud infrastructure, DevOps/SRE, developer tooling, and AI.
-- **A technical project.** The site itself is the first entry in [`/projects`](https://aldhairmartinez.com/projects/this-website) — a working example of how a simple static frontend evolves into an observed distributed system, documented as it happens rather than promised up front.
+- **A working lab.** The site itself is the first entry in [`/projects`](https://aldhairmartinez.com/projects/this-website) — production infrastructure and real telemetry, not a mockup of either.
 
 See [`/observability`](https://aldhairmartinez.com/observability) for a living breakdown of what's implemented today versus planned.
 
-## Stack
+## V1 architecture
 
-- **[Next.js](https://nextjs.org/)** (App Router) + **TypeScript** + **[Tailwind CSS](https://tailwindcss.com/)** (v4, CSS-first config)
-- **Static export** (`output: 'export'`) — the whole site builds to plain HTML/CSS/JS, no server runtime required
-- **[Cloudflare Pages](https://pages.cloudflare.com/)** for hosting
-- **MDX-style content** (frontmatter + Markdown) for projects and writing, parsed at build time with `gray-matter` + `remark`/`rehype` + `rehype-pretty-code` (Shiki syntax highlighting) — no CMS, no database
-- **[Grafana Faro](https://grafana.com/oss/faro/)** for frontend observability, integrated but inert until a real collector endpoint is configured (see Observability below)
-- **[Geist Sans / Geist Mono](https://vercel.com/font)** via `next/font/google`, self-hosted, zero external font requests
+- **[Next.js](https://nextjs.org/)** (App Router) + **React** + **TypeScript** + **[Tailwind CSS](https://tailwindcss.com/)** (v4, CSS-first config)
+- **Static export** (`output: 'export'`) — every route is pre-rendered at build time to plain HTML/CSS/JS; there is no server process and no backend
+- **[Cloudflare Pages](https://pages.cloudflare.com/)** for hosting and CI/CD — builds and deploys automatically on every push to `main`
+- **Cloudflare DNS + HTTPS** — the production site is served at [https://aldhairmartinez.com](https://aldhairmartinez.com)
+- **[Grafana Faro](https://grafana.com/oss/faro/)** — frontend instrumentation, sending real browser telemetry from production to **Grafana Cloud Frontend Observability**
+- **MDX-based content** (frontmatter + Markdown) for projects and writing, parsed at build time — no CMS, no database
 
-### Why static export over an edge adapter
+### Deployment flow
 
-Next.js can run on Cloudflare Pages either as a full SSR app (via an edge-runtime adapter) or as a static export served directly from the CDN. This site has no server-side personalization, no API routes, and no per-request logic — every page is either fully static or driven by build-time content — so static export is the simpler, faster, and cheaper choice: no cold starts, no edge-runtime restrictions on Node APIs, no adapter to maintain. If a future piece of this project genuinely needs a server (see Roadmap), it'll be added as its own service rather than by switching this frontend's rendering mode.
+```mermaid
+flowchart LR
+    A[Local Development] --> B[GitHub]
+    B --> C[Cloudflare Pages]
+    C --> D[Cloudflare Edge / DNS]
+    D --> E[aldhairmartinez.com]
+    E --> F[Visitor]
+```
+
+### Observability flow
+
+```mermaid
+flowchart LR
+    A[Browser] --> B[Grafana Faro Web SDK]
+    B --> C[Grafana Cloud Frontend Observability]
+```
+
+## Development
+
+```bash
+npm install
+npm run dev     # http://localhost:3000
+npm run lint
+npm run build    # static export → ./out
+```
+
+## Environment configuration
+
+Three variables configure Faro:
+
+- `NEXT_PUBLIC_FARO_URL`
+- `NEXT_PUBLIC_FARO_APP_NAME`
+- `NEXT_PUBLIC_FARO_ENVIRONMENT`
+
+`.env.example` documents every variable the project uses (with placeholder values only) and is committed to Git. `.env.local` holds real local values and is gitignored — it's never committed. Production values are configured directly in the Cloudflare Pages project settings, not in any file in this repository. No collector URLs, credentials, or tokens are ever committed or documented in this README.
+
+## Observability
+
+V1 is instrumented with Grafana Faro, sending real browser telemetry from **production** to Grafana Cloud Frontend Observability. The instrumentation is configured to collect page loads/navigation, frontend (JavaScript) errors, Web Vitals, browser/resource performance timing, and session data.
+
+Production verification showed page loads for `/` and `/observability`, with TTFB, FCP, LCP, and CLS reported, and zero JavaScript errors in that initial sample. That confirms the pipeline works end to end — it's not a performance benchmark, and the sample is far too small to draw any performance conclusions from.
+
+Session Replay and distributed tracing are **not** implemented — see below.
+
+## Current vs. planned
+
+**Current (live today):**
+- Static Next.js frontend, no backend
+- Cloudflare Pages deployment, custom domain, HTTPS
+- Grafana Faro → Grafana Cloud Frontend Observability, live in production
+
+**Planned:**
+- Python/FastAPI backend
+- OpenTelemetry + distributed tracing
+- PostgreSQL, Redis, Kafka
+- Docker, Kubernetes
+- AWS infrastructure
+- Grafana Faro Session Replay
+- Synthetic monitoring
+- k6 load testing
+
+Nothing in the "planned" list exists yet. [`/observability`](https://aldhairmartinez.com/observability) tracks the same distinction live, kept in sync with the code.
+
+## Repository philosophy
+
+This project evolves incrementally: **build → deploy → observe → document → expand.** Each piece ships as a real, verified addition — instrumented and confirmed working — before the next one starts, rather than being architected in full up front.
 
 ## Project structure
 
@@ -43,8 +108,9 @@ app/                    Routes (App Router)
 components/
   ui/                   Button, Card, Badge, StatusDot, Container, etc.
   nav/                  Navbar, Footer, mobile menu, social links
-  technical/            Grid background, topology graphic, project motifs
-  content/              Project/article cards, role timeline, pipeline diagram
+  technical/            Grid background, topology graphic, project motifs, cloud icon
+  content/              Project/article cards, role timeline, pipeline diagram,
+                         production architecture diagram
   analytics/            FaroInit — env-gated frontend instrumentation
   icons/                Hand-rolled GitHub/LinkedIn glyphs (lucide-react
                          dropped brand icons; these are minimal inline SVGs)
@@ -82,58 +148,6 @@ hidden: true                          # optional (articles only) — keeps a
 
 Body content in standard Markdown, including fenced code blocks.
 ```
-
-## Local development
-
-```bash
-npm install
-npm run dev
-```
-
-Visit `http://localhost:3000`. Copy `.env.example` to `.env.local` if you want to test with Faro instrumentation enabled — the site runs fine with no `.env.local` at all.
-
-```bash
-npm run build   # static export → ./out
-```
-
-## Deployment
-
-Hosted on Cloudflare Pages, connected directly to this GitHub repository:
-
-- **Build command:** `npm run build`
-- **Output directory:** `out`
-- **Environment variables:** set `NEXT_PUBLIC_SITE_URL` (and the `NEXT_PUBLIC_FARO_*` variables, once a real collector exists) in the Cloudflare Pages project settings — see `.env.example` for the full list. Every `NEXT_PUBLIC_*` variable is bundled into client-side JS, so nothing sensitive belongs here.
-- Cloudflare Pages builds a preview deployment for every pull request automatically; production deploys from the default branch.
-- Until a custom domain is attached, the site is reachable at its `*.pages.dev` URL.
-
-## Observability
-
-The long-term architecture this project is built toward:
-
-```
-Browser
-  → Next.js / TypeScript / React
-  → Grafana Faro (frontend instrumentation)
-  → Python / FastAPI backend
-  → PostgreSQL / Redis / Kafka
-  → OpenTelemetry / Grafana Alloy
-  → Grafana Cloud
-```
-
-Today, only the first two stages exist, and the Faro stage is integrated but not yet connected to a live collector — see [`/observability`](https://aldhairmartinez.com/observability) for the current, honest state, kept in sync with the code (not aspirational). No credentials or collector endpoints are hardcoded anywhere in this repository; instrumentation is entirely opt-in through environment variables (`components/analytics/FaroInit.tsx`).
-
-## Roadmap
-
-Introduced progressively, each as a real working piece rather than a diagram promise:
-
-- Connect Grafana Faro to a live Grafana Cloud Frontend Observability collector
-- Python/FastAPI backend as the first non-static service
-- PostgreSQL, Redis, and eventually Kafka for backend state and messaging
-- An OpenTelemetry Collector (Grafana Alloy) receiving and routing telemetry from both frontend and backend
-- Synthetic monitoring for availability and deployment health
-- k6 load testing once there's a backend worth load testing
-- Docker, Kubernetes/EKS, and Terraform as the infrastructure footprint grows
-- A published GitHub Actions CI workflow (typecheck/build on PR)
 
 ## Contributing
 
