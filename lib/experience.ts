@@ -10,6 +10,11 @@
 // one-page resume. It's kept separate and clearly additive, never merged
 // into `bullets`, so the resume-baseline content stays easy to audit against
 // the actual PDF/DOCX.
+//
+// After updating the resume PDF/DOCX/TXT, run `npm run resume:sync` — it
+// copies the PDF/DOCX into public/ and cross-checks dollar figures,
+// percentages, and rank claims between the .txt export and this file,
+// warning on anything mismatched. It never edits this file for you.
 
 export interface Role {
   company: string;

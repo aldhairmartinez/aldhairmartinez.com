@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "resume:sync": "node scripts/resume-sync.mjs"
   },
   "dependencies": {
     "@grafana/faro-web-sdk": "^2.11.0",
