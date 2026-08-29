@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RoleCard } from "@/components/content/RoleCard";
+import { EarlierRoleItem } from "@/components/content/EarlierRoleItem";
 import { grafanaRoles, earlierRoles } from "@/lib/experience";
 
 export const metadata: Metadata = {
@@ -30,25 +31,11 @@ export default function ExperiencePage() {
 
       <div className="border-t border-border py-16">
         <SectionHeading index="02" title="Earlier career" />
-        <ul className="flex flex-col gap-3">
+        <div className="flex flex-col">
           {earlierRoles.map((role) => (
-            <li
-              key={role.company}
-              className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border py-3 last:border-b-0"
-            >
-              <span className="text-sm font-medium text-text-primary">{role.company}</span>
-              <span className="flex items-center gap-3 font-mono text-xs uppercase tracking-wide text-text-muted">
-                {role.title}
-                {role.dateRange && (
-                  <>
-                    <span aria-hidden>·</span>
-                    <span>{role.dateRange}</span>
-                  </>
-                )}
-              </span>
-            </li>
+            <EarlierRoleItem key={role.company} role={role} />
           ))}
-        </ul>
+        </div>
       </div>
     </Container>
   );

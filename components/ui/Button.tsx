@@ -19,17 +19,29 @@ const variants: Record<Variant, string> = {
 type ButtonProps = {
   variant?: Variant;
   href?: string;
+  download?: string | boolean;
   className?: string;
 } & ComponentPropsWithoutRef<"button">;
 
 export function Button({
   variant = "primary",
   href,
+  download,
   className,
   children,
   ...props
 }: ButtonProps) {
   const classes = cn(base, variants[variant], className);
+
+  if (download && href) {
+    // Static file download (e.g. the resume) — a plain anchor with `download`
+    // triggers a save-as, which next/link's client-side routing doesn't do.
+    return (
+      <a href={href} download={download} className={classes}>
+        {children}
+      </a>
+    );
+  }
 
   if (href) {
     const isExternal = href.startsWith("http");

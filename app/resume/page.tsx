@@ -2,8 +2,17 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Button } from "@/components/ui/Button";
 import { RoleCard } from "@/components/content/RoleCard";
-import { grafanaRoles, earlierRoles } from "@/lib/experience";
+import { EarlierRoleItem } from "@/components/content/EarlierRoleItem";
+import { SkillsPanel } from "@/components/content/SkillsPanel";
+import {
+  grafanaRoles,
+  earlierRoles,
+  skillGroups,
+  education,
+  professionalSummary,
+} from "@/lib/experience";
 import { siteConfig } from "@/lib/site.config";
 
 export const metadata: Metadata = {
@@ -20,8 +29,24 @@ export default function ResumePage() {
         description={siteConfig.role}
       />
 
+      <div className="flex flex-wrap items-center gap-3 border-b border-border py-8">
+        <Button href="/aldhairmartinez_resume.pdf" download="aldhairmartinez_resume.pdf" variant="primary">
+          Download PDF
+        </Button>
+        <Button href="/aldhairmartinez_resume.docx" download="aldhairmartinez_resume.docx" variant="secondary">
+          Download DOCX
+        </Button>
+      </div>
+
       <div className="py-16">
-        <SectionHeading index="01" title="Grafana Labs" />
+        <SectionHeading index="01" title="Professional Summary" />
+        <p className="max-w-2xl text-sm leading-relaxed text-text-muted">
+          {professionalSummary}
+        </p>
+      </div>
+
+      <div className="border-t border-border py-16">
+        <SectionHeading index="02" title="Grafana Labs" />
         <div>
           {grafanaRoles.map((role, i) => (
             <RoleCard key={i} role={role} />
@@ -30,26 +55,42 @@ export default function ResumePage() {
       </div>
 
       <div className="border-t border-border py-16">
-        <SectionHeading index="02" title="Earlier career" />
-        <ul className="flex flex-col gap-3">
+        <SectionHeading index="03" title="Earlier Experience" />
+        <div className="flex flex-col">
           {earlierRoles.map((role) => (
-            <li
-              key={role.company}
-              className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border py-3 last:border-b-0"
-            >
-              <span className="text-sm font-medium text-text-primary">{role.company}</span>
-              <span className="flex items-center gap-3 font-mono text-xs uppercase tracking-wide text-text-muted">
-                {role.title}
-                {role.dateRange && (
-                  <>
-                    <span aria-hidden>·</span>
-                    <span>{role.dateRange}</span>
-                  </>
-                )}
-              </span>
-            </li>
+            <EarlierRoleItem key={role.company} role={role} />
           ))}
-        </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-border py-16">
+        <SectionHeading index="04" title="Technical Skills" />
+        <SkillsPanel groups={skillGroups} />
+      </div>
+
+      <div className="border-t border-border py-16">
+        <SectionHeading index="05" title="Education" />
+        <div className="flex flex-col">
+          {education.map((entry) => (
+            <div
+              key={entry.institution}
+              className="flex flex-col gap-1 border-b border-border py-4 last:border-b-0"
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <span className="text-sm font-medium text-text-primary">
+                  {entry.institution}{" "}
+                  <span className="text-text-muted">— {entry.degree}</span>
+                </span>
+                <span className="font-mono text-xs uppercase tracking-wide text-text-faint">
+                  {entry.location} · {entry.dateRange}
+                </span>
+              </div>
+              {entry.note && (
+                <p className="text-sm text-text-muted">{entry.note}</p>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </Container>
   );
