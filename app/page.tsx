@@ -1,69 +1,110 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Activity, Cloud, Workflow, Terminal, Sparkles } from "lucide-react";
+import { Container } from "@/components/ui/Container";
+import { Button } from "@/components/ui/Button";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { GridBackground } from "@/components/technical/GridBackground";
+import { TopologyGraphic } from "@/components/technical/TopologyGraphic";
+import { ProjectCard } from "@/components/content/ProjectCard";
+import { domains } from "@/lib/site.config";
+import { getFeaturedProjects } from "@/lib/content";
 
-export default function Home() {
+const domainIcons = [Activity, Cloud, Workflow, Terminal, Sparkles];
+
+export default async function Home() {
+  const featured = await getFeaturedProjects();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+    <>
+      <section className="relative overflow-hidden border-b border-border">
+        <GridBackground />
+        <Container className="relative grid gap-12 py-20 sm:py-28 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="flex flex-col gap-6">
+            <p className="font-mono text-xs uppercase tracking-widest text-text-faint">
+              <span className="text-accent-orange">Aldhair Martinez</span> / Solutions Engineer
+            </p>
+            <h1 className="text-3xl font-semibold leading-tight tracking-tight text-text-primary sm:text-4xl lg:text-5xl">
+              Solutions Engineer at the intersection of technical depth
+              and business outcomes — across observability, cloud
+              infrastructure, DevOps/SRE, developer tooling, and AI.
+            </h1>
+            <p className="max-w-xl text-base leading-relaxed text-text-muted">
+              I spend most of my time on problems where the answer isn&apos;t
+              immediately obvious — where an architecture, a failure mode, or a
+              cost curve has to be worked out rather than looked up. That&apos;s
+              the part of this job I like most, and it&apos;s what this site is
+              slowly becoming a record of.
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-4">
+              <Button href="/projects" variant="primary">
+                View Projects
+              </Button>
+              <Button href="/writing" variant="secondary">
+                Read Writing
+              </Button>
+            </div>
+          </div>
+
+          <div className="mx-auto w-full max-w-sm lg:mx-0 lg:max-w-none">
+            <TopologyGraphic className="w-full" />
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-b border-border py-20">
+        <Container>
+          <SectionHeading
+            index="01"
+            title="What I work across"
+            description="Technical sales cycles that span discovery, architecture, custom demos, sizing, and validation."
+          />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {domains.map((domain, i) => {
+              const Icon = domainIcons[i];
+              return (
+                <div
+                  key={domain.name}
+                  className="flex flex-col gap-3 rounded-md border border-border p-5"
+                >
+                  <Icon size={18} strokeWidth={1.5} className="text-accent-secondary" />
+                  <h3 className="text-sm font-semibold text-text-primary">
+                    {domain.name}
+                  </h3>
+                  <p className="text-xs leading-relaxed text-text-muted">
+                    {domain.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </Container>
+      </section>
+
+      {featured.length > 0 && (
+        <section className="py-20">
+          <Container>
+            <SectionHeading
+              index="02"
+              title="Selected work"
+              description="A public, gradually-expanding technical portfolio — see the full list on the Projects page."
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((project) => (
+                <ProjectCard key={project.slug} entry={project} />
+              ))}
+            </div>
+            <div className="mt-8">
+              <Link
+                href="/projects"
+                className="group inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wide text-text-muted transition-colors hover:text-text-primary"
+              >
+                All projects
+                <span className="transition-colors group-hover:text-accent-orange">→</span>
+              </Link>
+            </div>
+          </Container>
+        </section>
+      )}
+    </>
   );
 }

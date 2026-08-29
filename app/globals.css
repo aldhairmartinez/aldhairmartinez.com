@@ -1,26 +1,210 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surfaces — near-black through graphite, no green cast */
+  --color-bg-base: #0d0d0c;
+  --color-bg-raised: #18181633;
+  --color-bg-raised-solid: #181816;
+  --color-bg-overlay: #212120;
+
+  /* Borders */
+  --color-border: #2b2b28;
+  --color-border-strong: #46443f;
+
+  /* Accents — monochromatic warm grays. "primary" drives buttons and
+     primary links; "secondary" is the lighter accent used for hover states
+     and icon highlights. */
+  --color-accent-primary: #5f5c56;
+  --color-accent-primary-soft: #5f5c5626;
+  --color-accent-secondary: #b7b3a9;
+
+  /* Text */
+  --color-text-primary: #efece5;
+  --color-text-muted: #a3a19c;
+  --color-text-faint: #6f6d67;
+
+  /* Status — heavily desaturated; hue is a whisper, not a color statement */
+  --color-status-ok: #8a9288;
+  --color-status-warn: #96897d;
+  --color-status-alert: #8f7a76;
+
+  /* Experimental accent — under evaluation, applied to exactly one element
+     (homepage topology graphic's central node) until a direction is chosen. */
+  --color-accent-orange: #e86f2c;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg-base: var(--color-bg-base);
+  --color-bg-raised: var(--color-bg-raised);
+  --color-bg-raised-solid: var(--color-bg-raised-solid);
+  --color-bg-overlay: var(--color-bg-overlay);
+
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+
+  --color-accent-primary: var(--color-accent-primary);
+  --color-accent-primary-soft: var(--color-accent-primary-soft);
+  --color-accent-secondary: var(--color-accent-secondary);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-faint: var(--color-text-faint);
+
+  --color-status-ok: var(--color-status-ok);
+  --color-status-warn: var(--color-status-warn);
+  --color-status-alert: var(--color-status-alert);
+
+  --color-accent-orange: var(--color-accent-orange);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes trace-draw {
+  from {
+    stroke-dashoffset: var(--trace-length, 400);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.trace-path {
+  stroke-dasharray: var(--trace-length, 400);
+  stroke-dashoffset: var(--trace-length, 400);
+  animation: trace-draw 1.4s ease-out forwards;
+  animation-delay: 0.15s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: var(--color-accent-primary-soft);
+  color: var(--color-text-primary);
+}
+
+/* Fixed low-opacity grid — technical backdrop, not decoration */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+/* Prose styles for MDX-rendered project/article bodies */
+.prose-technical {
+  color: var(--color-text-primary);
+  max-width: 68ch;
+  line-height: 1.75;
+}
+
+.prose-technical h2 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+  scroll-margin-top: 5rem;
+}
+
+.prose-technical h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-text-primary);
+  scroll-margin-top: 5rem;
+}
+
+.prose-technical p {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  color: var(--color-text-muted);
+}
+
+.prose-technical a {
+  color: var(--color-accent-secondary);
+  text-underline-offset: 3px;
+}
+
+.prose-technical strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.prose-technical ul,
+.prose-technical ol {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-left: 1.25rem;
+  color: var(--color-text-muted);
+}
+
+.prose-technical li {
+  margin-top: 0.4rem;
+}
+
+.prose-technical ul {
+  list-style: none;
+}
+
+.prose-technical ul li::before {
+  content: "—";
+  color: var(--color-text-faint);
+  margin-right: 0.6em;
+}
+
+.prose-technical blockquote {
+  border-left: 2px solid var(--color-border-strong);
+  padding-left: 1rem;
+  color: var(--color-text-muted);
+  font-style: normal;
+}
+
+.prose-technical code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--color-bg-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  padding: 0.1em 0.4em;
+}
+
+.prose-technical pre {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: var(--color-bg-overlay) !important;
+}
+
+.prose-technical pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.prose-technical hr {
+  border-color: var(--color-border);
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
 }

@@ -1,0 +1,37 @@
+---
+title: "This Website"
+summary: "A static Next.js portfolio evolving, piece by piece, into an observed distributed application."
+tags: ["Next.js", "TypeScript", "Grafana Faro", "Cloudflare Pages", "OpenTelemetry"]
+status: "live"
+date: "2026-08-28"
+githubUrl: "https://github.com/aldhairmartinez/aldhairmartinez.com"
+featured: true
+---
+
+You're looking at it. This site started as a static Next.js portfolio, but the plan for it goes further: it's meant to become a working example of how a simple frontend evolves into an observed, full-stack system — without pretending to be more than it currently is at each step.
+
+## What's here today
+
+- Next.js (App Router) + TypeScript + Tailwind CSS, exported statically and served from Cloudflare Pages.
+- Content (projects, writing) authored as MDX with typed frontmatter, so new entries don't require touching a component.
+- Grafana Faro frontend instrumentation, wired but inert until a real collector endpoint is configured — see [`/observability`](/observability) for the honest current-state breakdown.
+
+## Where it's going
+
+The long-term architecture this repo is designed around:
+
+```
+Browser
+  → Next.js / TypeScript / React
+  → Grafana Faro (frontend instrumentation)
+  → Python / FastAPI backend
+  → PostgreSQL / Redis / Kafka
+  → OpenTelemetry / Grafana Alloy
+  → Grafana Cloud
+```
+
+Docker, Kubernetes, Terraform, k6, and synthetic monitoring get introduced progressively, each as a real, working addition rather than a diagram promise. The `/observability` page tracks what's implemented versus planned as that build-out happens.
+
+## Why build it this way
+
+The easy version of a portfolio site is a static page that says what I've done. The more useful version is a system that demonstrates it — where the README, the architecture, and the telemetry are all things a visitor (or another engineer) can actually inspect.

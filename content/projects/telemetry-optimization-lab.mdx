@@ -1,0 +1,25 @@
+---
+title: "Telemetry Optimization Lab"
+summary: "Hands-on exploration of cardinality, noisy logs, trace sampling, and the cost/performance tradeoffs of telemetry at scale."
+tags: ["Prometheus", "Loki", "Tempo", "Cost Optimization"]
+status: "planned"
+date: "2026-08-28"
+featured: false
+---
+
+A working exploration of the question most large observability environments eventually run into: not "can we collect this telemetry," but "should we, at this cardinality, at this volume, at this cost."
+
+## Planned scope
+
+- **Metric cardinality** — reproducing common cardinality explosions (unbounded labels, per-request IDs) and measuring their cost and query impact directly.
+- **Noisy logs** — identifying and suppressing high-volume, low-value log lines without losing the signal needed during an incident.
+- **Trace sampling** — comparing head-based and tail-based sampling strategies and their effect on both cost and the ability to catch rare, expensive traces.
+- **Unnecessary telemetry** — a practical audit method for finding metrics, logs, and traces nobody queries.
+
+## Why this project
+
+This is the day-to-day reality of sizing and optimization work in observability POVs — customers rarely have a cardinality or cost problem in the abstract, they have a specific noisy job or an unbounded label that's driving their bill. This lab is meant to make those patterns concrete and repeatable, rather than theoretical.
+
+## Status
+
+Planning stage. Findings and reproducible examples will be added here as the lab is built out.

@@ -1,0 +1,25 @@
+---
+title: "Cloud-Native Observability Lab"
+summary: "A production-inspired demo environment for end-to-end observability and troubleshooting practice."
+tags: ["Kubernetes", "AWS", "OpenTelemetry", "Docker", "k6"]
+status: "planned"
+date: "2026-08-28"
+featured: true
+---
+
+A production-inspired environment built to demonstrate end-to-end observability across a realistic distributed system — not a single instrumented service, but the kind of messy, multi-component setup that actually shows up in a POV.
+
+## Planned architecture
+
+- A frontend, multiple backend services, PostgreSQL, Redis, and Kafka, containerized and deployed to Kubernetes.
+- A mix of AWS-native compute — Kubernetes, serverless — to reflect how real environments blend platforms rather than living entirely in one.
+- Full OpenTelemetry instrumentation across metrics, logs, traces, and profiles, with synthetic monitoring and k6 load generation exercising the system continuously.
+- Intentional failure scenarios (latency injection, resource exhaustion, dependency failures) so the observability layer has something real to catch.
+
+## Why this project
+
+Most public observability demos instrument a single toy service. The gap I keep seeing in POVs is troubleshooting *across* services — correlating a slow checkout to a Kafka consumer lag to a noisy neighbor pod. This lab is built to make that correlation path visible and reproducible.
+
+## Status
+
+This project is in the planning stage. Build notes, architecture diagrams, and code will land here incrementally as pieces come online — check back, or watch the [GitHub repo](https://github.com/aldhairmartinez) once it's published.
