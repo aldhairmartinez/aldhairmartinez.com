@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PipelineDiagram } from "@/components/content/PipelineDiagram";
+import { ProductionArchitecture } from "@/components/content/ProductionArchitecture";
 import { StatusDot } from "@/components/ui/StatusDot";
 import { InlineCode } from "@/components/ui/InlineCode";
 
@@ -23,14 +24,23 @@ export default function ObservabilityPage() {
       <div className="py-16">
         <SectionHeading
           index="01"
+          title="Production architecture"
+          description="How a commit becomes a live page, end to end."
+        />
+        <ProductionArchitecture />
+      </div>
+
+      <div className="border-t border-border py-16">
+        <SectionHeading
+          index="02"
           title="Pipeline"
-          description="Current status of each stage in the long-term architecture."
+          description="Current status of each stage in the long-term telemetry architecture."
         />
         <PipelineDiagram />
       </div>
 
       <div className="border-t border-border py-16">
-        <SectionHeading index="02" title="Implemented today" />
+        <SectionHeading index="03" title="Implemented today" />
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <StatusDot status="ok" label="live" />
@@ -53,7 +63,7 @@ export default function ObservabilityPage() {
       </div>
 
       <div className="border-t border-border py-16">
-        <SectionHeading index="03" title="Planned" />
+        <SectionHeading index="04" title="Planned" />
         <ul className="flex flex-col gap-3">
           {[
             "Connect Faro to a real Grafana Cloud Frontend Observability collector, enabling real user monitoring, frontend error tracking, and Core Web Vitals.",
@@ -73,7 +83,7 @@ export default function ObservabilityPage() {
       </div>
 
       <div className="border-t border-border py-16">
-        <SectionHeading index="04" title="Why build it this way" />
+        <SectionHeading index="05" title="Why build it this way" />
         <p className="max-w-2xl text-sm leading-relaxed text-text-muted">
           Most portfolio sites either skip observability entirely or fake it
           with a screenshot of someone else&apos;s dashboard. Neither is

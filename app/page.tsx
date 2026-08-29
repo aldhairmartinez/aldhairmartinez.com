@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { Activity, Cloud, Workflow, Terminal, Sparkles } from "lucide-react";
+import { Activity, Workflow, Terminal, Sparkles } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GridBackground } from "@/components/technical/GridBackground";
 import { TopologyGraphic } from "@/components/technical/TopologyGraphic";
+import { CloudIcon } from "@/components/technical/CloudIcon";
 import { ProjectCard } from "@/components/content/ProjectCard";
 import { domains } from "@/lib/site.config";
 import { getFeaturedProjects } from "@/lib/content";
 
-const domainIcons = [Activity, Cloud, Workflow, Terminal, Sparkles];
+const domainIcons = [Activity, CloudIcon, Workflow, Terminal, Sparkles];
 
 export default async function Home() {
   const featured = await getFeaturedProjects();
@@ -66,7 +67,7 @@ export default async function Home() {
                   key={domain.name}
                   className="flex flex-col gap-3 rounded-md border border-border p-5"
                 >
-                  <Icon size={18} strokeWidth={1.5} className="text-accent-secondary" />
+                  <Icon size={18} className="text-accent-secondary" />
                   <h3 className="text-sm font-semibold text-text-primary">
                     {domain.name}
                   </h3>

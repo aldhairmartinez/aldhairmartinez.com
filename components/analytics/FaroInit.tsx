@@ -27,6 +27,13 @@ export function FaroInit() {
           name: FARO_APP_NAME,
           environment: FARO_ENVIRONMENT,
         },
+        // V1 decision: capture every session (no sampling) — this site's
+        // traffic is low enough that 100% costs nothing meaningful, and it
+        // gives a complete picture while the instrumentation is new.
+        // Revisit if/when volume grows.
+        sessionTracking: {
+          samplingRate: 1,
+        },
         instrumentations: getWebInstrumentations(),
       });
     });
