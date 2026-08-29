@@ -16,9 +16,9 @@ const stages: Stage[] = [
   },
   {
     label: "Grafana Faro",
-    detail: "Frontend instrumentation SDK, gated by env var",
-    status: "warn",
-    statusLabel: "integrated, not yet connected",
+    detail: "Frontend instrumentation SDK, connected in dev and production",
+    status: "ok",
+    statusLabel: "live",
   },
   {
     label: "Python / FastAPI backend",

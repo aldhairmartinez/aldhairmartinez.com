@@ -50,13 +50,15 @@ export default function ObservabilityPage() {
             </p>
           </div>
           <div className="flex flex-col gap-2">
-            <StatusDot status="warn" label="integrated, not yet connected" />
+            <StatusDot status="ok" label="live" />
             <p className="text-sm leading-relaxed text-text-muted">
-              The Grafana Faro Web SDK is integrated in the codebase, in{" "}
-              <InlineCode>components/analytics/FaroInit.tsx</InlineCode>, and
-              only initializes when <InlineCode accent>NEXT_PUBLIC_FARO_URL</InlineCode>{" "}
-              is set. That variable is currently unset in production, so no
-              frontend telemetry is being collected from real visitors yet.
+              The Grafana Faro Web SDK, in{" "}
+              <InlineCode>components/analytics/FaroInit.tsx</InlineCode>, is
+              connected to a real Grafana Cloud Frontend Observability
+              collector — live in both local development and production,
+              gated behind <InlineCode accent>NEXT_PUBLIC_FARO_URL</InlineCode>.
+              Errors, Web Vitals, and session data are collected at 100%
+              sampling for V1. Session Replay isn&apos;t enabled yet.
             </p>
           </div>
         </div>
@@ -66,7 +68,7 @@ export default function ObservabilityPage() {
         <SectionHeading index="04" title="Planned" />
         <ul className="flex flex-col gap-3">
           {[
-            "Connect Faro to a real Grafana Cloud Frontend Observability collector, enabling real user monitoring, frontend error tracking, and Core Web Vitals.",
+            "Enable Grafana Faro Session Replay once it's available on this stack.",
             "Add a Python/FastAPI backend service as the first non-static piece of the stack.",
             "Introduce PostgreSQL, Redis, and eventually Kafka as backend state and messaging needs arise.",
             "Deploy an OpenTelemetry Collector (Grafana Alloy) to receive and route telemetry from both frontend and backend.",
