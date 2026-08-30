@@ -11,11 +11,19 @@ An evolving hands-on observability and development lab — FastAPI, PostgreSQL, 
 
 The `/observability` route referenced throughout this README only exists in this repo's own local/preview deployments now, not at the production domain.
 
+## Guides
+
+Three learning guides document this lab's progression in depth, one per major version — historical records of what was built and verified at each stage, not living documentation:
+
+1. [V1 — Frontend, Cloudflare Pages, and Faro](docs/01-frontend-cloudflare-faro.pdf)
+2. [V2 — FastAPI, OpenTelemetry, Alloy, Tempo, and distributed tracing](docs/02-backend-otel-alloy-tempo.pdf)
+3. [V3 — PostgreSQL, persistence, application data, and database-aware tracing](docs/03-postgres-persistence-tracing.pdf)
+
 ## Architecture at a glance
 
 Two systems, deliberately kept separate in this README so the distinction is never ambiguous:
 
-**Production today** — a fully static site, no backend involved at all:
+**This repo's own deployment** — a fully static site, no backend involved at all, served at this repo's Cloudflare Pages `*.pages.dev` URL (not the `aldhairmartinez.com` domain):
 
 ```mermaid
 flowchart LR
@@ -37,14 +45,15 @@ flowchart TD
     AL --> G[Grafana Cloud]
 ```
 
-## V1 architecture (frontend, in production)
+## V1 architecture (frontend — Cloudflare Pages + Faro)
 
 - **[Next.js](https://nextjs.org/)** (App Router) + **React** + **TypeScript** + **[Tailwind CSS](https://tailwindcss.com/)** (v4, CSS-first config)
-- **Static export** (`output: 'export'`) — every route is pre-rendered at build time to plain HTML/CSS/JS; production has no server process and no backend
-- **[Cloudflare Pages](https://pages.cloudflare.com/)** for hosting and CI/CD — builds and deploys automatically on every push to `main`
-- **Cloudflare DNS + HTTPS** — the production site is served at [https://aldhairmartinez.com](https://aldhairmartinez.com)
-- **[Grafana Faro](https://grafana.com/oss/faro/)** — frontend instrumentation, sending real browser telemetry from production to **Grafana Cloud Frontend Observability**
+- **Static export** (`output: 'export'`) — every route is pre-rendered at build time to plain HTML/CSS/JS; no server process and no backend
+- **[Cloudflare Pages](https://pages.cloudflare.com/)** for hosting and CI/CD — builds and deploys automatically on every push to `main`, served at this repo's own `*.pages.dev` URL
+- **[Grafana Faro](https://grafana.com/oss/faro/)** — frontend instrumentation, sending real browser telemetry to **Grafana Cloud Frontend Observability**
 - **MDX-based content** (frontmatter + Markdown) for projects and writing, parsed at build time — no CMS, no database
+
+This was the site's original architecture, and it briefly served the real `aldhairmartinez.com` domain in production. The domain has since moved to the separate [`aldhairmartinez-portfolio`](https://github.com/aldhairmartinez/aldhairmartinez-portfolio) repository (see the note at the top of this README) — V1 as built and described here is unchanged, it just isn't what visitors to the apex domain see anymore.
 
 ## V2 architecture (backend, local Docker only — not production-hosted)
 
@@ -64,18 +73,16 @@ flowchart TD
 - **OpenTelemetry instrumentation for PostgreSQL** (`opentelemetry-instrumentation-psycopg`) — every query is now its own span, alongside the existing FastAPI/httpx spans, all under the same trace as the browser's request.
 - Like V2, none of this is production-hosted — it's a real, working local application lab, not a mockup.
 
-### Deployment flow
+### Deployment flow (this repo)
 
 ```mermaid
 flowchart LR
     A[Local Development] --> B[GitHub]
     B --> C[Cloudflare Pages]
-    C --> D[Cloudflare Edge / DNS]
-    D --> E[aldhairmartinez.com]
-    E --> F[Visitor]
+    C --> D["*.pages.dev"]
 ```
 
-### Observability flow (production — frontend)
+### Observability flow (frontend, V1)
 
 ```mermaid
 flowchart LR
@@ -118,20 +125,20 @@ The backend and Alloy have their own env files following the same pattern — `b
 
 ## Observability
 
-V1 is instrumented with Grafana Faro, sending real browser telemetry from **production** to Grafana Cloud Frontend Observability. The instrumentation is configured to collect page loads/navigation, frontend (JavaScript) errors, Web Vitals, browser/resource performance timing, and session data.
+V1 is instrumented with Grafana Faro, sending real browser telemetry to Grafana Cloud Frontend Observability. The instrumentation is configured to collect page loads/navigation, frontend (JavaScript) errors, Web Vitals, browser/resource performance timing, and session data.
 
-Production verification showed page loads for `/` and `/observability`, with TTFB, FCP, LCP, and CLS reported, and zero JavaScript errors in that initial sample. That confirms the pipeline works end to end — it's not a performance benchmark, and the sample is far too small to draw any performance conclusions from.
+Verification (originally done while this repo served the real domain) showed page loads for `/` and `/observability`, with TTFB, FCP, LCP, and CLS reported, and zero JavaScript errors in that initial sample. That confirms the pipeline works end to end — it's not a performance benchmark, and the sample is far too small to draw any performance conclusions from.
 
 Session Replay is not implemented yet. Distributed tracing between the browser and the backend is implemented, but only reaches Grafana Cloud while the backend is running locally — see below.
 
 ## Current vs. planned
 
-**LIVE (production):**
-- Static Next.js frontend, no backend in production
-- Cloudflare Pages deployment, custom domain, HTTPS
-- Grafana Faro → Grafana Cloud Frontend Observability, live in production
+**LIVE — this repo's own Cloudflare Pages deployment (`*.pages.dev`, no longer the custom domain):**
+- Static Next.js frontend, no backend
+- Cloudflare Pages deployment, HTTPS
+- Grafana Faro → Grafana Cloud Frontend Observability
 
-**LIVE — LOCAL (Docker Desktop, not production-hosted):**
+**LIVE — LOCAL (Docker Desktop, not hosted anywhere public):**
 - FastAPI backend, OpenTelemetry-instrumented (including PostgreSQL query spans)
 - Grafana Alloy, relaying backend traces to Grafana Cloud Tempo / Application Observability
 - PostgreSQL — contact history, resume-download analytics, project-view analytics, deployment history
@@ -141,11 +148,11 @@ Session Replay is not implemented yet. Distributed tracing between the browser a
 **Roadmap, in intended order:**
 - **Redis — next/later.** Only once there's a real caching, performance, or shared-state need.
 - **Kafka — later.** Only once there's a real asynchronous/event-processing need.
-- **AWS — future production phase.** Move FastAPI, Alloy, and PostgreSQL into real production infrastructure. This phase also adds: GitHub Actions deployment recording (automating what's currently a manual seed), production secrets management, a real production backend URL, and production frontend → backend connectivity.
+- **AWS — future lab phase.** Move FastAPI, Alloy, and PostgreSQL into real cloud infrastructure of their own — a lab deployment, not the `aldhairmartinez.com` production portfolio, which intentionally stays a static site (see the note at the top of this README). This phase also adds: GitHub Actions deployment recording (automating what's currently a manual seed), secrets management, a real backend URL, and frontend → backend connectivity beyond localhost.
 - **Google Workspace — future.** Turn `hello@aldhairmartinez.com` from a forwarding address into a full mailbox.
 - Also still ahead, independent of the above: Grafana Faro Session Replay, synthetic monitoring, k6 load testing against the FastAPI backend.
 
-The backend, Alloy, and PostgreSQL are all real and working today — they're just not production infrastructure yet. [`/observability`](https://aldhairmartinez.com/observability) tracks the same distinction live, kept in sync with the code.
+The backend, Alloy, and PostgreSQL are all real and working today — they're just not hosted anywhere public yet. `/observability` (this repo's own route, at its `*.pages.dev` URL) tracks the same distinction live, kept in sync with the code.
 
 ## Repository philosophy
 
