@@ -21,28 +21,28 @@ const stages: Stage[] = [
     statusLabel: "live",
   },
   {
-    label: "Python / FastAPI backend",
-    detail: "Application layer for backend telemetry",
-    status: "neutral",
-    statusLabel: "planned",
+    label: "FastAPI backend",
+    detail: "OpenTelemetry-instrumented (FastAPI + httpx auto-instrumentation), running in Docker Desktop",
+    status: "warn",
+    statusLabel: "live — local",
+  },
+  {
+    label: "Grafana Alloy",
+    detail: "Local OTLP relay — receives backend traces, exports to Grafana Cloud. Running in Docker Desktop",
+    status: "warn",
+    statusLabel: "live — local",
   },
   {
     label: "PostgreSQL / Redis / Kafka",
-    detail: "Data and messaging layer",
-    status: "neutral",
-    statusLabel: "planned",
-  },
-  {
-    label: "OpenTelemetry / Grafana Alloy",
-    detail: "Collector and pipeline layer",
+    detail: "Data layer — PostgreSQL first (contact history, analytics), Redis and Kafka later as real needs arise",
     status: "neutral",
     statusLabel: "planned",
   },
   {
     label: "Grafana Cloud",
-    detail: "Metrics, logs, traces, profiles backend",
-    status: "neutral",
-    statusLabel: "planned",
+    detail: "Tempo / Application Observability — receives Faro and Alloy-relayed backend traces, correlated via W3C trace context",
+    status: "ok",
+    statusLabel: "live",
   },
 ];
 

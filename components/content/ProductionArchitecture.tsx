@@ -62,7 +62,7 @@ const stack = [
   "TypeScript",
   "Tailwind CSS",
   "Static Export → /out",
-  "No backend yet",
+  "No backend in production",
   "HTTPS enabled",
 ];
 

@@ -61,6 +61,41 @@ export default function ObservabilityPage() {
               sampling for V1. Session Replay isn&apos;t enabled yet.
             </p>
           </div>
+          <div className="flex flex-col gap-2">
+            <StatusDot status="warn" label="live — local" />
+            <p className="text-sm leading-relaxed text-text-muted">
+              A FastAPI backend (<InlineCode>backend/</InlineCode>),
+              instrumented with OpenTelemetry (FastAPI + httpx
+              auto-instrumentation), running locally in Docker Desktop — not
+              yet hosted in production.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <StatusDot status="warn" label="live — local" />
+            <p className="text-sm leading-relaxed text-text-muted">
+              Grafana Alloy, also running locally in Docker Desktop, relays
+              the backend&apos;s traces over OTLP to Grafana Cloud Tempo /
+              Application Observability.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <StatusDot status="warn" label="live — local" />
+            <p className="text-sm leading-relaxed text-text-muted">
+              Browser-to-backend distributed trace correlation: Faro attaches
+              a W3C trace context header to the contact form&apos;s request,
+              and FastAPI continues that same trace rather than starting a
+              new one — a contact form submission produces one continuous
+              trace across both.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <StatusDot status="warn" label="live — local" />
+            <p className="text-sm leading-relaxed text-text-muted">
+              The contact form sends real email through Resend to{" "}
+              <InlineCode>hello@aldhairmartinez.com</InlineCode>, via the
+              same local FastAPI backend.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -69,12 +104,13 @@ export default function ObservabilityPage() {
         <ul className="flex flex-col gap-3">
           {[
             "Enable Grafana Faro Session Replay once it's available on this stack.",
-            "Add a Python/FastAPI backend service as the first non-static piece of the stack.",
-            "Introduce PostgreSQL, Redis, and eventually Kafka as backend state and messaging needs arise.",
-            "Deploy an OpenTelemetry Collector (Grafana Alloy) to receive and route telemetry from both frontend and backend.",
+            "PostgreSQL as the next data-layer phase — contact history, resume analytics, project analytics, deployment history.",
+            "Redis, later, once there's a real caching use case.",
+            "Kafka, later, once there's a real asynchronous/event-processing use case.",
+            "Move the FastAPI backend and Grafana Alloy from Docker Desktop to real infrastructure (AWS, Kubernetes/EKS, Terraform) once there's a reason to.",
+            "Google Workspace for hello@aldhairmartinez.com, turning the forwarding address into a full mailbox.",
             "Add synthetic monitoring for availability and deployment health.",
-            "Add k6 load testing once there's a backend worth load testing.",
-            "Introduce Docker, Kubernetes/EKS, and Terraform as the backend and infrastructure footprint grows.",
+            "Add k6 load testing against the FastAPI backend.",
           ].map((item) => (
             <li key={item} className="flex items-start gap-3 text-sm text-text-muted">
               <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-text-faint" />
