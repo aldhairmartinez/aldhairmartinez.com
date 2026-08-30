@@ -1,6 +1,7 @@
 """aldhairmartinez.com API — V2 foundation.
 
-Deliberately small: three endpoints, no database, no auth, no tracing yet.
+Deliberately small: no auth yet. A local PostgreSQL connection exists as a
+foundation only — no schema, no feature uses it yet.
 Runs locally via Docker (see ../docker-compose.yml) on http://localhost:8000
 while the Next.js frontend runs on http://localhost:3000 — CORS below is
 what allows the browser to call from one origin to the other.
@@ -16,6 +17,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from database import get_connection
 from email_client import EmailDeliveryError, send_contact_email
 from telemetry import setup_telemetry
 
@@ -47,6 +49,18 @@ def health():
 @app.get("/version")
 def version():
     return {"version": APP_VERSION}
+
+
+@app.get("/health/db")
+def health_db():
+    try:
+        with get_connection() as conn, conn.cursor() as cur:
+            cur.execute("SELECT version();")
+            (pg_version,) = cur.fetchone()
+    except Exception:
+        raise HTTPException(status_code=503, detail="Database connection failed.")
+
+    return {"status": "ok", "postgres_version": pg_version}
 
 
 class ContactRequest(BaseModel):
