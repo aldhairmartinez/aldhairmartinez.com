@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Button } from "@/components/ui/Button";
+import { ResumeDownloadButton } from "@/components/content/ResumeDownloadButton";
 import { RoleCard } from "@/components/content/RoleCard";
 import { EarlierRoleItem } from "@/components/content/EarlierRoleItem";
 import { SkillsPanel } from "@/components/content/SkillsPanel";
@@ -30,12 +30,22 @@ export default function ResumePage() {
       />
 
       <div className="flex flex-wrap items-center gap-3 border-b border-border py-8">
-        <Button href="/aldhairmartinez_resume.pdf" download="aldhairmartinez_resume.pdf" variant="primary">
+        <ResumeDownloadButton
+          fileType="pdf"
+          href="/aldhairmartinez_resume.pdf"
+          download="aldhairmartinez_resume.pdf"
+          variant="primary"
+        >
           Download PDF
-        </Button>
-        <Button href="/aldhairmartinez_resume.docx" download="aldhairmartinez_resume.docx" variant="secondary">
+        </ResumeDownloadButton>
+        <ResumeDownloadButton
+          fileType="docx"
+          href="/aldhairmartinez_resume.docx"
+          download="aldhairmartinez_resume.docx"
+          variant="secondary"
+        >
           Download DOCX
-        </Button>
+        </ResumeDownloadButton>
       </div>
 
       <div className="py-16">

@@ -33,8 +33,14 @@ const stages: Stage[] = [
     statusLabel: "live — local",
   },
   {
-    label: "PostgreSQL / Redis / Kafka",
-    detail: "Data layer — PostgreSQL first (contact history, analytics), Redis and Kafka later as real needs arise",
+    label: "PostgreSQL",
+    detail: "Contact history, resume/project analytics, deployment history — running in Docker Desktop, queries appear as spans in the same traces",
+    status: "warn",
+    statusLabel: "live — local",
+  },
+  {
+    label: "Redis / Kafka",
+    detail: "Caching and async/event processing — not needed yet, added when a real use case exists",
     status: "neutral",
     statusLabel: "planned",
   },

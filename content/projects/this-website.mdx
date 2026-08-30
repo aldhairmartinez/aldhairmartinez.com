@@ -18,15 +18,15 @@ You're looking at it. This site started as a static Next.js portfolio, but the p
 - A FastAPI backend, instrumented with OpenTelemetry, running locally in Docker — **not yet hosted in production**. It handles the contact form, sending real email through Resend to `hello@aldhairmartinez.com`.
 - Grafana Alloy, also running locally, relays the backend's traces over OTLP to Grafana Cloud Tempo / Application Observability.
 - One continuous distributed trace from browser to backend: Faro propagates a W3C trace context header on the contact form's request, and FastAPI continues that same trace rather than starting a new one.
+- PostgreSQL, running locally alongside the backend, persists contact submissions, resume-download and project-view analytics, and deployment history — plain `psycopg` with a connection pool, no ORM yet. Every query appears as its own span in the same traces as the request that triggered it.
 
 ## Where it's going
 
-The backend and Alloy are real and working — they're just not production infrastructure yet. What's still ahead:
+The backend, Alloy, and PostgreSQL are all real and working — they're just not production infrastructure yet. What's still ahead:
 
 ```
-FastAPI + Alloy (Docker Desktop, local)
+FastAPI + Alloy + PostgreSQL (Docker Desktop, local)
   → AWS-hosted backend infrastructure
-  → PostgreSQL (contact history, resume analytics, project analytics, deployment history)
   → Redis (once there's a real caching use case)
   → Kafka (once there's a real event-processing use case)
 ```

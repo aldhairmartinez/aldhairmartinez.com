@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { StatusDot } from "@/components/ui/StatusDot";
+import { ProjectViewTracker } from "@/components/content/ProjectViewTracker";
 import { getAllProjects, getProjectBySlug } from "@/lib/content";
 import { projectStatusMeta, isAccentProjectTag } from "@/lib/status";
 
@@ -36,6 +37,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
 
   return (
     <Container>
+      <ProjectViewTracker slug={slug} />
       <div className="flex flex-col gap-4 border-b border-border py-16">
         <Link
           href="/projects"

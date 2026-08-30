@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ComponentPropsWithoutRef } from "react";
+import type { AnchorHTMLAttributes, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/cn";
 
 type Variant = "primary" | "secondary" | "ghost";
@@ -37,7 +37,12 @@ export function Button({
     // Static file download (e.g. the resume) — a plain anchor with `download`
     // triggers a save-as, which next/link's client-side routing doesn't do.
     return (
-      <a href={href} download={download} className={classes}>
+      <a
+        href={href}
+        download={download}
+        className={classes}
+        {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}
+      >
         {children}
       </a>
     );

@@ -11,6 +11,32 @@ My personal technical portfolio — and, alongside that, an evolving hands-on ob
 
 See [`/observability`](https://aldhairmartinez.com/observability) for a living breakdown of what's implemented today versus planned.
 
+## Architecture at a glance
+
+Two systems, deliberately kept separate in this README so the distinction is never ambiguous:
+
+**Production today** — a fully static site, no backend involved at all:
+
+```mermaid
+flowchart LR
+    A[Browser] --> B[Cloudflare Pages]
+    B --> C[Static Next.js frontend]
+    C --> D[Faro]
+    D --> E[Grafana Cloud]
+```
+
+**Local application lab** — real, working, but running only in Docker Desktop on this machine, not reachable by real visitors:
+
+```mermaid
+flowchart TD
+    A[Browser / Next.js] --> B[FastAPI]
+    B --> C[PostgreSQL]
+    B --> R[Resend]
+    B --> O[OpenTelemetry]
+    O --> AL[Alloy]
+    AL --> G[Grafana Cloud]
+```
+
 ## V1 architecture (frontend, in production)
 
 - **[Next.js](https://nextjs.org/)** (App Router) + **React** + **TypeScript** + **[Tailwind CSS](https://tailwindcss.com/)** (v4, CSS-first config)
@@ -27,6 +53,16 @@ See [`/observability`](https://aldhairmartinez.com/observability) for a living b
 - **[Grafana Alloy](https://grafana.com/docs/alloy/)**, also running locally, relays those traces over OTLP to **Grafana Cloud Tempo / Application Observability**.
 - **Distributed trace correlation** — Grafana Faro attaches a W3C trace context header to the contact form's request, and FastAPI continues that same trace rather than starting a new one, producing one continuous trace from browser to backend.
 - None of this runs in production yet; production remains the fully static site described above.
+
+## V3 architecture (PostgreSQL data layer, local Docker only)
+
+- **PostgreSQL 18.6**, running in Docker Desktop with a named volume for persistence, reached from FastAPI through a `psycopg` connection pool (`psycopg_pool`) — no ORM, plain SQL.
+- **Contact history** — every contact-form submission is persisted (name/email/message, whether the Resend email actually sent, and any delivery error), independent of whether email delivery itself succeeds.
+- **Resume download analytics** — anonymous counters for PDF/DOCX downloads (file type + timestamp only, no IP, no user-agent, no personal data).
+- **Project view analytics** — anonymous counters for project-page views (slug + timestamp only).
+- **Deployment history** — `version`/`commit_sha`/`environment`/`notes`, seeded today from real git history; the write endpoint (`POST /api/deployments`) is protected by a shared-secret header, meant for CI/CD later.
+- **OpenTelemetry instrumentation for PostgreSQL** (`opentelemetry-instrumentation-psycopg`) — every query is now its own span, alongside the existing FastAPI/httpx spans, all under the same trace as the browser's request.
+- Like V2, none of this is production-hosted — it's a real, working local application lab, not a mockup.
 
 ### Deployment flow
 
@@ -52,6 +88,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     A[FastAPI backend] --> B[OpenTelemetry SDK]
+    P[PostgreSQL queries] --> B
     B --> C[Grafana Alloy]
     C --> D[Grafana Cloud Tempo / Application Observability]
 ```
@@ -77,7 +114,7 @@ Three variables configure Faro:
 
 `.env.example` documents every variable the project uses (with placeholder values only) and is committed to Git. `.env.local` holds real local values and is gitignored — it's never committed. Production values are configured directly in the Cloudflare Pages project settings, not in any file in this repository. No collector URLs, credentials, or tokens are ever committed or documented in this README.
 
-The backend and Alloy have their own env files following the same pattern — `backend/.env.example` and `alloy/.env.example` document what each needs (Resend, Grafana Cloud OTLP endpoint/credentials); the real values live in gitignored `backend/.env` and `alloy/.env`.
+The backend and Alloy have their own env files following the same pattern — `backend/.env.example` and `alloy/.env.example` document what each needs (Resend, PostgreSQL credentials, the deployment-history write token, Grafana Cloud OTLP endpoint/credentials); the real values live in gitignored `backend/.env` and `alloy/.env`.
 
 ## Observability
 
@@ -89,29 +126,26 @@ Session Replay is not implemented yet. Distributed tracing between the browser a
 
 ## Current vs. planned
 
-**Current (live — production):**
+**LIVE (production):**
 - Static Next.js frontend, no backend in production
 - Cloudflare Pages deployment, custom domain, HTTPS
 - Grafana Faro → Grafana Cloud Frontend Observability, live in production
 
-**Current (live — local only, Docker Desktop):**
-- FastAPI backend, OpenTelemetry-instrumented
+**LIVE — LOCAL (Docker Desktop, not production-hosted):**
+- FastAPI backend, OpenTelemetry-instrumented (including PostgreSQL query spans)
 - Grafana Alloy, relaying backend traces to Grafana Cloud Tempo / Application Observability
+- PostgreSQL — contact history, resume-download analytics, project-view analytics, deployment history
 - Browser-to-backend distributed trace correlation (Faro and FastAPI share the same trace ID)
 - Resend email delivery for the contact form, routed to `hello@aldhairmartinez.com`
 
-**Planned:**
-- PostgreSQL — the next data-layer phase (contact history, resume analytics, project analytics, deployment history)
-- Redis — later, once there's a real caching use case
-- Kafka — later, once there's a real asynchronous/event-processing use case
-- AWS infrastructure — moving the local FastAPI/Alloy backend into production
-- Google Workspace for `hello@aldhairmartinez.com` — turning the forwarding address into a full mailbox
-- Grafana Faro Session Replay
-- Kubernetes/EKS, Terraform — once the backend has real infrastructure to manage
-- Synthetic monitoring
-- k6 load testing against the FastAPI backend
+**Roadmap, in intended order:**
+- **Redis — next/later.** Only once there's a real caching, performance, or shared-state need.
+- **Kafka — later.** Only once there's a real asynchronous/event-processing need.
+- **AWS — future production phase.** Move FastAPI, Alloy, and PostgreSQL into real production infrastructure. This phase also adds: GitHub Actions deployment recording (automating what's currently a manual seed), production secrets management, a real production backend URL, and production frontend → backend connectivity.
+- **Google Workspace — future.** Turn `hello@aldhairmartinez.com` from a forwarding address into a full mailbox.
+- Also still ahead, independent of the above: Grafana Faro Session Replay, synthetic monitoring, k6 load testing against the FastAPI backend.
 
-The backend and Alloy are real and working today — they're just not production infrastructure yet. [`/observability`](https://aldhairmartinez.com/observability) tracks the same distinction live, kept in sync with the code.
+The backend, Alloy, and PostgreSQL are all real and working today — they're just not production infrastructure yet. [`/observability`](https://aldhairmartinez.com/observability) tracks the same distinction live, kept in sync with the code.
 
 ## Repository philosophy
 
@@ -155,9 +189,14 @@ lib/
   cn.ts                 Tiny className-merging helper
 
 backend/                FastAPI application (Docker, local only — not in production)
-  main.py               Routes: /health, /version, /api/contact
-  telemetry.py          OpenTelemetry setup (OTLP → Alloy)
+  main.py               Routes: health checks, /api/contact, analytics, deployments
+  telemetry.py          OpenTelemetry setup (FastAPI/httpx/psycopg → Alloy)
   email_client.py       Resend integration
+  db.py                 PostgreSQL connection pool + schema application
+  schema.sql            Table definitions (idempotent, run on every startup)
+  contacts.py           Contact-submission persistence
+  analytics.py          Resume-download / project-view analytics
+  deployments.py        Deployment history read/write
 
 alloy/                  Grafana Alloy config (Docker, local only)
   config.alloy          OTLP receiver → Grafana Cloud Tempo / Application Observability

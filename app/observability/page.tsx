@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PipelineDiagram } from "@/components/content/PipelineDiagram";
 import { ProductionArchitecture } from "@/components/content/ProductionArchitecture";
+import { DataLayerPanel } from "@/components/content/DataLayerPanel";
 import { StatusDot } from "@/components/ui/StatusDot";
 import { InlineCode } from "@/components/ui/InlineCode";
 
@@ -96,19 +97,38 @@ export default function ObservabilityPage() {
               same local FastAPI backend.
             </p>
           </div>
+          <div className="flex flex-col gap-2">
+            <StatusDot status="warn" label="live — local" />
+            <p className="text-sm leading-relaxed text-text-muted">
+              PostgreSQL, running locally alongside the backend, persists
+              contact submissions, resume-download and project-view
+              analytics, and deployment history — plain <InlineCode>psycopg</InlineCode>{" "}
+              with a connection pool, no ORM. Every query appears as its own
+              span in the same traces as the request that triggered it. See
+              the data layer below.
+            </p>
+          </div>
         </div>
       </div>
 
       <div className="border-t border-border py-16">
-        <SectionHeading index="04" title="Planned" />
+        <SectionHeading
+          index="04"
+          title="Data layer"
+          description="Read live from the local PostgreSQL database — empty or absent entirely in production, same as everything else backend-dependent on this page."
+        />
+        <DataLayerPanel />
+      </div>
+
+      <div className="border-t border-border py-16">
+        <SectionHeading index="05" title="Planned" />
         <ul className="flex flex-col gap-3">
           {[
             "Enable Grafana Faro Session Replay once it's available on this stack.",
-            "PostgreSQL as the next data-layer phase — contact history, resume analytics, project analytics, deployment history.",
-            "Redis, later, once there's a real caching use case.",
-            "Kafka, later, once there's a real asynchronous/event-processing use case.",
-            "Move the FastAPI backend and Grafana Alloy from Docker Desktop to real infrastructure (AWS, Kubernetes/EKS, Terraform) once there's a reason to.",
-            "Google Workspace for hello@aldhairmartinez.com, turning the forwarding address into a full mailbox.",
+            "Redis — next/later, only once there's a real caching, performance, or shared-state need.",
+            "Kafka — later, only once there's a real asynchronous/event-processing need.",
+            "AWS — future production phase: move FastAPI, Alloy, and PostgreSQL into real production infrastructure. Also brings GitHub Actions deployment recording, production secrets management, a real production backend URL, and production frontend → backend connectivity.",
+            "Google Workspace — future: turn hello@aldhairmartinez.com from a forwarding address into a full mailbox.",
             "Add synthetic monitoring for availability and deployment health.",
             "Add k6 load testing against the FastAPI backend.",
           ].map((item) => (
@@ -121,7 +141,7 @@ export default function ObservabilityPage() {
       </div>
 
       <div className="border-t border-border py-16">
-        <SectionHeading index="05" title="Why build it this way" />
+        <SectionHeading index="06" title="Why build it this way" />
         <p className="max-w-2xl text-sm leading-relaxed text-text-muted">
           Most portfolio sites either skip observability entirely or fake it
           with a screenshot of someone else&apos;s dashboard. Neither is
