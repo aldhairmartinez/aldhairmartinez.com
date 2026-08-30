@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    environment:
+      - CORS_ORIGINS=http://localhost:3000,http://10.0.0.30:3000
+      - OTEL_SERVICE_NAME=aldhairmartinez-backend
+      - OTEL_RESOURCE_ATTRIBUTES=service.namespace=aldhairmartinez-com,deployment.environment=development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy:4318
+    depends_on:
+      - alloy
+
+  alloy:
+    image: grafana/alloy:v1.19.2
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+    env_file:
+      - ./alloy/.env
+    ports:
+      - "12345:12345"
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/alloy/config.alloy
