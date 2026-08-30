@@ -1,15 +1,15 @@
-# aldhairmartinez.com
+# aldhairmartinez.com (engineering lab)
 
-My personal technical portfolio — and, alongside that, an evolving hands-on observability and development lab. It started as a static Next.js site and is meant to grow, piece by piece, into a fully observed application, with each addition built and verified for real rather than described in advance.
+An evolving hands-on observability and development lab — FastAPI, PostgreSQL, Grafana Alloy, OpenTelemetry, and Grafana Cloud, each piece built and verified for real rather than described in advance.
 
-**Live at [aldhairmartinez.com](https://aldhairmartinez.com).**
+> **This repository is no longer the production site.** The `aldhairmartinez.com` domain now points to a separate, lightweight production portfolio: [`aldhairmartinez-portfolio`](https://github.com/aldhairmartinez/aldhairmartinez-portfolio) (static Next.js on Cloudflare Pages + a Cloudflare Worker for the contact form). This repo remains a real, working lab — just no longer public-facing at the apex domain. It's still deployed on its own Cloudflare Pages project at its default `*.pages.dev` URL, and is featured as a linked project from the production portfolio.
 
 ## What this is
 
-- **A portfolio.** Projects, writing, career history, and a resume for Aldhair Martinez, a Solutions Engineer working across observability, cloud infrastructure, DevOps/SRE, developer tooling, and AI.
-- **A working lab.** The site itself is the first entry in [`/projects`](https://aldhairmartinez.com/projects/this-website) — real infrastructure and real telemetry (some of it local-only for now), not a mockup of either.
+- **A working lab**, not a portfolio anymore — this repo used to serve both roles; the portfolio content and production hosting have moved to the separate repo linked above.
+- Real infrastructure and real telemetry (some of it local-only), not a mockup of either. Everything below describes what's actually built here.
 
-See [`/observability`](https://aldhairmartinez.com/observability) for a living breakdown of what's implemented today versus planned.
+The `/observability` route referenced throughout this README only exists in this repo's own local/preview deployments now, not at the production domain.
 
 ## Architecture at a glance
 
