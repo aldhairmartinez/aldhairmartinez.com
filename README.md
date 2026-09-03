@@ -111,6 +111,15 @@ npm run build    # static export → ./out
 
 Backend (optional, local only): `docker compose up` — see `backend/` and `alloy/`.
 
+The lab is started manually, on purpose — `docker-compose.yml` deliberately
+sets no restart policy on `backend`, `alloy`, or `postgres`. This is an
+occasional learning/demo environment, not a continuously running service:
+there's no expectation it survives a Docker Desktop restart or a reboot
+unattended, and adding `restart: unless-stopped` would fight that intent
+rather than serve it. Bring it up with `docker compose up` whenever you
+want to use or demo it; there's nothing wrong if it's simply not running
+between sessions.
+
 ## Environment configuration
 
 Three variables configure Faro:
@@ -150,7 +159,7 @@ Session Replay is not implemented yet. Distributed tracing between the browser a
 - **Kafka — later.** Only once there's a real asynchronous/event-processing need.
 - **AWS — future lab phase.** Move FastAPI, Alloy, and PostgreSQL into real cloud infrastructure of their own — a lab deployment, not the `aldhairmartinez.com` production portfolio, which intentionally stays a static site (see the note at the top of this README). This phase also adds: GitHub Actions deployment recording (automating what's currently a manual seed), secrets management, a real backend URL, and frontend → backend connectivity beyond localhost.
 - **Google Workspace — future.** Turn `hello@aldhairmartinez.com` from a forwarding address into a full mailbox.
-- Also still ahead, independent of the above: Grafana Faro Session Replay, synthetic monitoring, k6 load testing against the FastAPI backend.
+- Also still ahead, independent of the above: Grafana Faro Session Replay, synthetic monitoring, k6 load testing against the FastAPI backend, and automated testing (frontend and backend) — none of this repository's code has automated test coverage today; that's a future enhancement, not something this pass addressed.
 
 The backend, Alloy, and PostgreSQL are all real and working today — they're just not hosted anywhere public yet. `/observability` (this repo's own route, at its `*.pages.dev` URL) tracks the same distinction live, kept in sync with the code.
 
@@ -233,7 +242,7 @@ Body content in standard Markdown, including fenced code blocks.
 
 ## Contributing
 
-This is a personal portfolio, so it isn't looking for external feature contributions — but if you spot a bug, a broken link, or an accessibility issue, an issue or PR is welcome.
+This is a public engineering and observability learning lab, not a project soliciting external feature contributions — but if you spot a bug, a broken link, or an accessibility issue, an issue or PR is welcome.
 
 ## License
 

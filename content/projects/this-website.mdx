@@ -8,14 +8,16 @@ githubUrl: "https://github.com/aldhairmartinez/aldhairmartinez.com"
 featured: true
 ---
 
-You're looking at it. This site started as a static Next.js portfolio, but the plan for it goes further: it's meant to become a working example of how a simple frontend evolves into an observed, full-stack system — without pretending to be more than it currently is at each step.
+This repository is the **engineering lab**, not the production portfolio. The actual production site at [aldhairmartinez.com](https://aldhairmartinez.com) lives in a separate repository, [`aldhairmartinez-portfolio`](https://github.com/aldhairmartinez/aldhairmartinez-portfolio) — a deliberately simple, static Next.js site on Cloudflare Pages with a Cloudflare Worker for the contact form. This lab's own static frontend may be deployed through its own, separate Cloudflare Pages project at its default `*.pages.dev` URL — not the `aldhairmartinez.com` domain.
+
+This site started as a static Next.js portfolio, but the plan for it goes further: it's meant to become a working example of how a simple frontend evolves into an observed, full-stack system — without pretending to be more than it currently is at each step.
 
 ## What's here today
 
-- Next.js (App Router) + TypeScript + Tailwind CSS, exported statically and served from Cloudflare Pages.
+- Next.js (App Router) + TypeScript + Tailwind CSS, exported statically and served from this repo's own Cloudflare Pages project.
 - Content (projects, writing) authored as MDX with typed frontmatter, so new entries don't require touching a component.
-- Grafana Faro frontend instrumentation, live in both development and production — see [`/observability`](/observability) for the honest current-state breakdown.
-- A FastAPI backend, instrumented with OpenTelemetry, running locally in Docker — **not yet hosted in production**. It handles the contact form, sending real email through Resend to `hello@aldhairmartinez.com`.
+- Grafana Faro frontend instrumentation, live in this repo's own deployment and in local development — see [`/observability`](/observability) for the honest current-state breakdown.
+- A FastAPI backend, instrumented with OpenTelemetry, running locally in Docker — **not hosted anywhere public, by design**. It handles the contact form, sending real email through Resend to `hello@aldhairmartinez.com`.
 - Grafana Alloy, also running locally, relays the backend's traces over OTLP to Grafana Cloud Tempo / Application Observability.
 - One continuous distributed trace from browser to backend: Faro propagates a W3C trace context header on the contact form's request, and FastAPI continues that same trace rather than starting a new one.
 - PostgreSQL, running locally alongside the backend, persists contact submissions, resume-download and project-view analytics, and deployment history — plain `psycopg` with a connection pool, no ORM yet. Every query appears as its own span in the same traces as the request that triggered it.

@@ -1,7 +1,18 @@
-"""OpenTelemetry tracing setup — sends spans directly to Grafana Cloud's
-OTLP gateway. No Collector/Alloy at this stage: one backend service doesn't
-need a fan-in layer yet, and the SDK's own BatchSpanProcessor already
-batches spans before sending.
+"""OpenTelemetry tracing setup for the FastAPI backend.
+
+Actual trace path, as implemented: this SDK sends spans to a local Grafana
+Alloy instance (OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy:4318, set in
+docker-compose.yml), which relays them over OTLP to Grafana Cloud's OTLP
+gateway and on into Tempo / Application Observability - see
+../alloy/config.alloy. This backend never talks to Grafana Cloud directly
+and holds no Grafana Cloud credentials (those live only in alloy/.env).
+
+This is a separate path from the frontend: Grafana Faro (browser) sends its
+own telemetry straight to Grafana Cloud Frontend Observability, with no
+Alloy involved on that side. The two are correlated at the trace level
+because Faro attaches a W3C traceparent header to its contact-form request,
+and FastAPIInstrumentor below continues that same trace rather than
+starting a new one - confirmed directly in Tempo, not just by this comment.
 
 Optional, like Faro and Resend: with OTEL_EXPORTER_OTLP_ENDPOINT unset,
 setup_telemetry() does nothing and the app behaves exactly as it did before

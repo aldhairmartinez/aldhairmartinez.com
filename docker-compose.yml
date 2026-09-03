@@ -8,7 +8,10 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      - CORS_ORIGINS=http://localhost:3000,http://10.0.0.30:3000
+      # CORS_ORIGINS is a real, user-set variable in backend/.env (see
+      # backend/.env.example) - not hardcoded here, so it no longer bakes a
+      # specific LAN IP into a tracked file. Falls back to
+      # http://localhost:3000 if unset (see backend/main.py).
       - OTEL_SERVICE_NAME=aldhairmartinez-backend
       - OTEL_RESOURCE_ATTRIBUTES=service.namespace=aldhairmartinez-com,deployment.environment=development
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy:4318
