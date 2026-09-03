@@ -1,8 +1,8 @@
-# aldhairmartinez.com (engineering lab)
+# aldhairmartinez-portfolio-observability (engineering lab)
 
 An evolving hands-on observability and development lab — FastAPI, PostgreSQL, Grafana Alloy, OpenTelemetry, and Grafana Cloud, each piece built and verified for real rather than described in advance.
 
-> **This repository is no longer the production site.** The `aldhairmartinez.com` domain now points to a separate, lightweight production portfolio: [`aldhairmartinez-portfolio`](https://github.com/aldhairmartinez/aldhairmartinez-portfolio) (static Next.js on Cloudflare Pages + a Cloudflare Worker for the contact form). This repo remains a real, working lab — just no longer public-facing at the apex domain. It's still deployed on its own Cloudflare Pages project at its default `*.pages.dev` URL, and is featured as a linked project from the production portfolio.
+> **This repository is no longer the production site.** It was renamed from `aldhairmartinez.com` to `aldhairmartinez-portfolio-observability` on 2026-09-04 for consistency with the production repository's naming (`aldhairmartinez-portfolio`) - same repository, same history, GitHub redirects the old URL automatically. The `aldhairmartinez.com` domain now points to a separate, lightweight production portfolio: [`aldhairmartinez-portfolio`](https://github.com/aldhairmartinez/aldhairmartinez-portfolio) (static Next.js on Cloudflare Pages + a Cloudflare Worker for the contact form). This repo remains a real, working lab — just no longer public-facing at the apex domain. It's still deployed on its own Cloudflare Pages project (`aldhairmartinez-com`, at `aldhairmartinez-com.pages.dev`) - that Cloudflare project name and URL are a legacy identifier that predates this rename and cannot be changed in place (Cloudflare Pages doesn't support renaming a project's `*.pages.dev` subdomain without deleting and recreating it, which was deliberately not done here to avoid losing deployment history and risking the GitHub integration). This repo is also featured as a linked project from the production portfolio.
 
 ## What this is
 

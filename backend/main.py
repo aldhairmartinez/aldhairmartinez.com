@@ -1,4 +1,4 @@
-"""aldhairmartinez.com API — V3 data layer.
+"""aldhairmartinez-portfolio-observability API — V3 data layer.
 
 Runs locally via Docker (see ../docker-compose.yml) on http://localhost:8000
 while the Next.js frontend runs on http://localhost:3000 — CORS below is
@@ -35,7 +35,7 @@ async def lifespan(app: FastAPI):
     db.close_pool()
 
 
-app = FastAPI(title="aldhairmartinez.com API", version=APP_VERSION, lifespan=lifespan)
+app = FastAPI(title="aldhairmartinez-portfolio-observability API", version=APP_VERSION, lifespan=lifespan)
 setup_telemetry(app, APP_VERSION)
 
 # Comma-separated list, e.g. "http://localhost:3000,http://localhost:3001"
